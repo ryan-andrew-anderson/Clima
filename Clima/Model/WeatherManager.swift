@@ -28,7 +28,7 @@ struct WeatherManager {
                     return
                 }
                 if let safeData = data {
-                    self.parseJSON(weather: safeData)
+                    self.parseJSON(weatherData: safeData)
                 }
             }
             //4.Start the Task
@@ -36,47 +36,27 @@ struct WeatherManager {
         }
     }
     /// Turns JSON data with REST API  into a swift object
-    func parseJSON(weather: Data) {
+    func parseJSON(weatherData: Data) {
         // Declare JSON decoder
         let decoder = JSONDecoder()
-        // use do block to "catch" any error's
+        // use do block to "catch" any error's. Basically, do this and if erros come, ill stop the process and catch errors so you can print them
         do {
-            //creating data object
-            let decodedData = try decoder.decode(WeatherData.self, from: weather)
-            //printing data object
+            //Convertiong JSON-Data into Swift-Data using the outline from WetherData
+            let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
+            //creating readable "id" data from decoder
             let id = decodedData.weather[0].id
-            getConditionName(weatherId: id)
+            //creating readable "temp" data from decoder
+            let temp = decodedData.main.temp
+            //creating readable "name" data from decoder
+            let name = decodedData.name
+            // now that data is decoded, create a Swift Object called WeatherModel
+            let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
+            
+            print(weather.conditionName)
+            print(weather.temperatureString)
         }catch {
             //if error pops up, it prints
             print(error)
-        }
-    }
-    func getConditionName(weatherId: Int) -> String {
-        switch weatherId {
-        case 200...232:
-            print("Thunderstorm \(weatherId)")
-            return "cloud.bolt"
-        case 300...332:
-            print("Drizzle \(weatherId)")
-            return "cloud.drizzle"
-        case 500...532:
-            print("Rain \(weatherId)")
-            return "cloud.rain"
-        case 600...632:
-            print("Snow \(weatherId)")
-            return "cloud.snow"
-        case 701...781:
-            print("Mist \(weatherId)")
-            return "cloud.fog"
-        case 800:
-            print("Clear \(weatherId)")
-            return "sun.max"
-        case 801...804:
-            print("Clouds \(weatherId)")
-            return "cloud.bolt"
-        default:
-            print("Error\(weatherId)")
-            return "cloud"
         }
     }
 }
