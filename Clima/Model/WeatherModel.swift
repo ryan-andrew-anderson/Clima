@@ -17,6 +17,7 @@ struct WeatherModel {
         return "\(String(format: "%.1f", temperature))F"
     }
     
+    ///The value of conditionName switchs on weather code provided by the API "api.openweathermap.org"
     var conditionName: String {
         switch conditionId {
         case 200...232:

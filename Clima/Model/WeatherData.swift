@@ -1,5 +1,5 @@
 //
-//  WaetherData.swift
+//  WeatherData.swift
 //  Clima
 //
 //  Created by Ryan Anderson on 12/19/21.

@@ -8,15 +8,24 @@
 
 import Foundation
 
+protocol WeatherManagerDelegate {
+    func didUpdateWeater(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didFailWithError(error: Error)
+}
+
 struct WeatherManager {
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=6dbc259a546e8488c9d786703b615931&units=imperial"
+    
+    var delegate: WeatherManagerDelegate?
+    
     func fetchWeather(cityName: String) {
         let urlString = "\(weatherURL)&q=\(cityName)"
-        performRequest(urlString: urlString)
+        performRequest(with: urlString)
         print(urlString)
     }
     
-    func performRequest(urlString: String) {
+    ///Creates the URL, Session, and SessionTask in order to recieve data from the API
+    func performRequest(with urlString: String) {
         //1.Create URL
         if let url = URL(string: urlString) {
             //2.Create a URLSession
@@ -24,19 +33,28 @@ struct WeatherManager {
             //3.Give the session a task
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    print(error!)
+                    delegate?.didFailWithError(error: error!)
                     return
                 }
                 if let safeData = data {
-                    self.parseJSON(weatherData: safeData)
+                    //Unwraps newly parsed data
+                    if let weather = self.parseJSON(safeData) {
+//                        // Creates and inits an instance of WeatherViewController
+//                        let weatherVC = WeatherViewController()
+//                        //passes new swift object over the the WeatherViewController to be used
+//                        weatherVC.didUpdateWeater(weather: weather)
+                        delegate?.didUpdateWeater(self, weather: weather)
+                        
+                    }
                 }
             }
             //4.Start the Task
             task.resume()
         }
     }
+    
     /// Turns JSON data with REST API  into a swift object
-    func parseJSON(weatherData: Data) {
+    func parseJSON(_ weatherData: Data) -> WeatherModel? {
         // Declare JSON decoder
         let decoder = JSONDecoder()
         // use do block to "catch" any error's. Basically, do this and if erros come, ill stop the process and catch errors so you can print them
@@ -51,12 +69,14 @@ struct WeatherManager {
             let name = decodedData.name
             // now that data is decoded, create a Swift Object called WeatherModel
             let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
-            
             print(weather.conditionName)
             print(weather.temperatureString)
+            return weather
+          
         }catch {
             //if error pops up, it prints
-            print(error)
+            delegate?.didFailWithError(error: error)
+            return nil
         }
     }
 }
