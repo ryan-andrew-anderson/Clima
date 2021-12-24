@@ -14,7 +14,7 @@ struct WeatherModel {
     let temperature: Double
     
     var temperatureString: String {
-        return "\(String(format: "%.1f", temperature))F"
+        return "\(String(format: "%.1f", temperature))"
     }
     
     ///The value of conditionName switchs on weather code provided by the API "api.openweathermap.org"

@@ -37,7 +37,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         //        Use searchTextField.text to get the weather for that city.
         
         if let city = searchTextField.text {
-            weatherManager.fetchWeather(cityName: city)
+            print("Debug : \(city)")
+            let cityStringWithNoSpaces = String(city.replacingOccurrences(of: " ", with: ""))
+            print(cityStringWithNoSpaces)
+            weatherManager.fetchWeather(cityName: cityStringWithNoSpaces)
         }
         searchTextField.text = ""
     }
@@ -51,7 +54,9 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         }
     }
     func didUpdateWeater(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        print(weather.temperature)
+        temperatureLabel.text = weather.temperatureString
+        conditionImageView.image = UIImage(systemName: weather.conditionName)
+        cityLabel.text = weather.cityName
     }
 
     func didFailWithError(error: Error) {

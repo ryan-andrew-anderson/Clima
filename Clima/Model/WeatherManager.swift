@@ -43,8 +43,10 @@ struct WeatherManager {
 //                        let weatherVC = WeatherViewController()
 //                        //passes new swift object over the the WeatherViewController to be used
 //                        weatherVC.didUpdateWeater(weather: weather)
-                        delegate?.didUpdateWeater(self, weather: weather)
-                        
+                        DispatchQueue.main.async {
+                            print(weather)
+                            delegate?.didUpdateWeater(self, weather: weather)
+                        }
                     }
                 }
             }
