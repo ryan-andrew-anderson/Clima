@@ -39,14 +39,9 @@ struct WeatherManager {
                 if let safeData = data {
                     //Unwraps newly parsed data
                     if let weather = self.parseJSON(safeData) {
-//                        // Creates and inits an instance of WeatherViewController
-//                        let weatherVC = WeatherViewController()
-//                        //passes new swift object over the the WeatherViewController to be used
-//                        weatherVC.didUpdateWeater(weather: weather)
-                        DispatchQueue.main.async {
-                            print(weather)
+                            //passes the new swift object over to the WeatherViewController to be used
                             delegate?.didUpdateWeater(self, weather: weather)
-                        }
+                        print(weather)
                     }
                 }
             }
